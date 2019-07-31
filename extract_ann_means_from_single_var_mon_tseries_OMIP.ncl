@@ -174,6 +174,9 @@ begin
   end do
   filedimdef(f_out, dim_names, dim_sizes, dim_unlimited)
 
+  ; add rhozero to file if any var has kg in its units attribute
+  add_rhozero = False
+
   ;
   ; define time invariant and varname variables
   ;   copy attributes
@@ -210,6 +213,12 @@ begin
             continue
           end if
           f_out->$varnames(var_ind)$@$varatts(attind)$ = f_in[0]->$varnames(var_ind)$@$varatts(attind)$
+          if (varatts(attind) .eq. "units") then
+            str_index = str_index_of_substr(f_in[0]->$varnames(var_ind)$@$varatts(attind)$, "kg", -1)
+            if (.not. ismissing(str_index)) then
+              add_rhozero = True
+            end if
+          end if
         end do
       end if
     end if
@@ -240,6 +249,15 @@ begin
       f_out@contact = "klindsay@ucar.edu"
       f_out@githash = systemfunc("git rev-parse HEAD")
     end do
+  end if
+
+  ; add rhozero to file
+  if add_rhozero then
+    rhozero = 1026.0
+    rhozero!0 = "ncl_scalar"
+    rhozero@units = "kg m-3"
+    rhozero@standard_name = "reference_sea_water_density_for_boussinesq_approximation"
+    f_out->rhozero = rhozero
   end if
 
   setfileoption(f_out, "DefineMode", False)
