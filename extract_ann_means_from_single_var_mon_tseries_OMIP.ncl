@@ -53,11 +53,7 @@ begin
   exprs     = (/     "omip2",     "omip1" /)
   labels    = (/  "r1i1p1f1",  "r2i1p1f1" /)
   db_ids    = (/      "1540",      "1542" /)
-  if any(varname .eq. (/ "thetao", "so", "uo", "vo" /)) then
-    yr_begs = (/           1,           1 /)
-  else
-    yr_begs = (/      1+5*61,      1+5*62 /)
-  end if
+  yr_begs   = (/           1,           1 /)
   yr_ends   = (/        6*61,        6*62 /)
   date_strs = (/ "v20190309", "v20190309" /)
 
